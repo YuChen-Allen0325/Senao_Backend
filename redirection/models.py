@@ -1,13 +1,13 @@
 import string
 import random
 from django.db import models
-from config import SERVER_HOST
+from config import SERVER_HOST, Expiration_Date
 from datetime import datetime, timedelta
 
 class URLMapping(models.Model):
     original_url = models.URLField()
     short_url = models.URLField(unique=True)
-    expiration_date = models.DateTimeField(null=False, default=datetime.now() + timedelta(days=30))
+    expiration_date = models.DateTimeField(null=False, default=datetime.now() + timedelta(days=int(Expiration_Date.EXPIRATION_DATE)))
 
     def save(self, *args, **kwargs):
         if not self.short_url:
