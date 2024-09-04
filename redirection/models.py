@@ -1,24 +1,24 @@
 import string
 import random
 from django.db import models
-from config import SERVER_HOST, Expiration_Date
-from datetime import datetime, timedelta
+from config import Expiration_Date
+from datetime import timedelta
+from django.utils import timezone
 
 class URLMapping(models.Model):
-    original_url = models.URLField()
-    short_url = models.URLField(unique=True)
-    expiration_date = models.DateTimeField(null=False, default=datetime.now() + timedelta(days=int(Expiration_Date.EXPIRATION_DATE)))
+    original_url = models.URLField(max_length=2048)
+    short_code = models.CharField(max_length=6, unique=True)
+    expiration_date = models.DateTimeField(null=False, default=timezone.now() + timedelta(days=int(Expiration_Date.EXPIRATION_DATE)))
 
     def save(self, *args, **kwargs):
-        if not self.short_url:
-            self.short_url = self.generate_short_url() 
+        if not self.short_code:
+            self.short_code = self.generate_short_code() 
         super().save(*args, **kwargs)
 
-    def generate_short_url(self, length=6):
+    def generate_short_code(self, length=6):
         characters = string.ascii_letters + string.digits 
         while True:
             short_code = ''.join(random.choices(characters, k=length))
-            short_url = f'{SERVER_HOST.HOST}/redirection/{short_code}/'
-            if not URLMapping.objects.filter(short_url=short_url).exists():
+            if not URLMapping.objects.filter(short_code=short_code).exists():
                 break
-        return short_url
+        return short_code

@@ -122,6 +122,7 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
+TIME_ZONE = 'Asia/Taipei'
 USE_TZ = True
 
 
