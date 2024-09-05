@@ -12,6 +12,15 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from config import PostgresConfig
+import warnings
+import logging.config
+import logging_config
+
+
+warnings.simplefilter("ignore", RuntimeWarning)
+
+# Logging setting
+logging.config.dictConfig(logging_config.CONF)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,7 +35,7 @@ SECRET_KEY = 'django-insecure-#h*x6vz1a%z%)4ed)x-8yypx#8@meld(o8(tv+ay+r9z5)$2r#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -51,6 +60,15 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.ScopedRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'shorten_url_throttle': '5/minute', 
+    }
+}
 
 ROOT_URLCONF = 'url_system_proj.urls'
 

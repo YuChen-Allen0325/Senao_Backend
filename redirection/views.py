@@ -1,16 +1,20 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from django.shortcuts import redirect
-from rest_framework.response import Response
-from rest_framework.views import APIView
+import pytz
+import logging.config
 from .models import URLMapping
 from .serializers import URLMappingSerializer
 from .handler import validate_url
 from datetime import datetime
-import pytz
+from django.shortcuts import redirect
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .throttling import IPRateThrottle
+
+log = logging.getLogger(__name__)
 
 class URLCreateView(APIView):
+    throttle_classes = [IPRateThrottle]   ## rate limiting   5/min in same IP
+
     def post(self, request, *args, **kwargs):
         try:
             original_url = request.data.get("original_url")
@@ -29,6 +33,7 @@ class URLCreateView(APIView):
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         except Exception as e:
+            log.error(f"{e} in URLCreateView")
             return Response({"short_url": '', 'expiration_date': '', "success": False, "reason": f"{e}"}, status=status.HTTP_400_BAD_REQUEST)
 
 class URLRedirectView(APIView):
@@ -40,6 +45,7 @@ class URLRedirectView(APIView):
         try:
             url_mapping_data = URLMapping.objects.get(short_code=short_code)
         except URLMapping.DoesNotExist:
+            log.error("URL not found in URLRedirectView")
             return Response({"error": "URL not found"}, status=status.HTTP_404_NOT_FOUND)
         
         if url_mapping_data.expiration_date < datetime_now_with_tz:

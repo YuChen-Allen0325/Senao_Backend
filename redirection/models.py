@@ -2,13 +2,13 @@ import string
 import random
 from django.db import models
 from config import Expiration_Date
-from datetime import timedelta
+from datetime import timedelta, datetime
 from django.utils import timezone
 
 class URLMapping(models.Model):
     original_url = models.URLField(max_length=2048)
     short_code = models.CharField(max_length=6, unique=True)
-    expiration_date = models.DateTimeField(null=False, default=timezone.now() + timedelta(days=int(Expiration_Date.EXPIRATION_DATE)))
+    expiration_date = models.DateTimeField(null=False, default=datetime.now() + timedelta(days=int(Expiration_Date.EXPIRATION_DATE)))
 
     def save(self, *args, **kwargs):
         if not self.short_code:
