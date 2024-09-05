@@ -6,7 +6,7 @@
   **API 1: Create Short URL**   (using POST method)<br><br>
     Input (payload):<br>
       "original_url": the url you want to shorten<br>
-      ![201](https://github.com/user-attachments/assets/8ad3fee6-ffbe-471a-a030-2d8602a9c14e)
+      ![201](https://github.com/user-attachments/assets/bfcba998-22ef-44e6-816a-8d0a0dff22e8)
       <br><br>
     Output:<br>
       "short_url": the url is original_url shortened url and a null character indicates conversion failure<br>
@@ -39,3 +39,6 @@
       "URL expired": the short_url is expired
 
 # User guide:<br>
+Before using this project, please confirm the relevant .env file settings. The current settings have been uploaded to the Docker Hub repository and deployed on AWS as examples.<br><br>
+
+In the .env file, the HOST setting changes according to the DRF server. The PostgreSQL-related settings (PG_DATABASES_NAME, PG_DATABASES_USER, PG_DATABASES_PASSWORD, PG_DATABASES_HOST, PG_DATABASES_PORT) should also change according to the target environment. Note that PG_DATABASES_NAME is used to connect to an existing database in PostgreSQL, where only the postgres database exists by default. If any of the above settings are modified, the original Docker Hub image can no longer be used as a reference example.
